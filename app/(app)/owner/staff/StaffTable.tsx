@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { User } from "@/lib/types";
-import { reorderStaffAction, deleteStaffAction, renameStaffAction } from "./actions";
+import { reorderStaffAction, deleteStaffAction, renameStaffAction, resetPasswordAction } from "./actions";
 import SubmitButton from "@/components/SubmitButton";
 
 export default function StaffTable({
@@ -16,6 +16,9 @@ export default function StaffTable({
   const [renameName, setRenameName] = useState("");
   const [renameDisplayName, setRenameDisplayName] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
+  const [passwordTarget, setPasswordTarget] = useState<User | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
 
   return (
     <>
@@ -64,6 +67,17 @@ export default function StaffTable({
                   }}
                 >
                   変更
+                </button>
+                <button
+                  type="button"
+                  className="btn-action btn-action-rename"
+                  onClick={() => {
+                    setPasswordTarget(user);
+                    setNewPassword("");
+                    setNewPasswordConfirm("");
+                  }}
+                >
+                  パスワード変更
                 </button>
                 {user.id !== currentUserId ? (
                   <button
@@ -128,6 +142,45 @@ export default function StaffTable({
               </button>
               <SubmitButton className="btn btn-primary" pendingText="削除中...">
                 実行する
+              </SubmitButton>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div className="modal-overlay" hidden={passwordTarget === null}>
+        <div className="modal-box">
+          <h3>{passwordTarget?.name} さんのパスワードを変更</h3>
+          <form action={resetPasswordAction}>
+            <input type="hidden" name="user_id" value={passwordTarget?.id ?? ""} />
+            <label>
+              新しいパスワード
+              <input
+                type="password"
+                name="new_password"
+                minLength={4}
+                autoComplete="new-password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </label>
+            <label>
+              新しいパスワード（確認）
+              <input
+                type="password"
+                name="new_password_confirm"
+                minLength={4}
+                autoComplete="new-password"
+                value={newPasswordConfirm}
+                onChange={(e) => setNewPasswordConfirm(e.target.value)}
+              />
+            </label>
+            <div className="modal-actions">
+              <button type="button" className="btn btn-secondary" onClick={() => setPasswordTarget(null)}>
+                キャンセル
+              </button>
+              <SubmitButton className="btn btn-primary" pendingText="変更中...">
+                変更する
               </SubmitButton>
             </div>
           </form>

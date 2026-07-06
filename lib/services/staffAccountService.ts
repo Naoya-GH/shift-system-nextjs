@@ -3,8 +3,9 @@ import * as userRepository from "../repositories/userRepository";
 import * as shiftRequestRepository from "../repositories/shiftRequestRepository";
 import * as shiftRepository from "../repositories/shiftRepository";
 import type { User } from "../types";
+import { ValidationError } from "../errors";
 
-export class ValidationError extends Error {}
+export { ValidationError };
 
 export async function listAll(): Promise<User[]> {
   return userRepository.all();
@@ -113,4 +114,26 @@ export async function renameStaff(
   }
 
   await userRepository.updateNames(userId, newName, newDisplayName);
+}
+
+// オーナーが他のスタッフのパスワードを変更する（現在のパスワードは不要。パスワードを忘れた場合の救済用）
+export async function resetPassword(
+  userId: number,
+  newPassword: string,
+  newPasswordConfirm: string
+): Promise<void> {
+  if (newPassword !== newPasswordConfirm) {
+    throw new ValidationError("新しいパスワードが一致しません。");
+  }
+  if (newPassword.length < 4) {
+    throw new ValidationError("パスワードは4文字以上で入力してください。");
+  }
+
+  const target = await userRepository.findById(userId);
+  if (!target) {
+    throw new ValidationError("対象のアカウントが見つかりません。");
+  }
+
+  const hashed = await hashPassword(newPassword);
+  await userRepository.updatePassword(userId, hashed);
 }

@@ -24,6 +24,25 @@ export async function createStaffAction(formData: FormData): Promise<void> {
   redirect(`/owner/staff?flash=${encodeURIComponent(message)}`);
 }
 
+export async function resetPasswordAction(formData: FormData): Promise<void> {
+  const userId = Number(formData.get("user_id") ?? 0);
+  const newPassword = String(formData.get("new_password") ?? "");
+  const newPasswordConfirm = String(formData.get("new_password_confirm") ?? "");
+
+  let message = "パスワードを変更しました。";
+  try {
+    await staffAccountService.resetPassword(userId, newPassword, newPasswordConfirm);
+  } catch (e) {
+    if (e instanceof staffAccountService.ValidationError) {
+      message = e.message;
+    } else {
+      throw e;
+    }
+  }
+
+  redirect(`/owner/staff?flash=${encodeURIComponent(message)}`);
+}
+
 export async function reorderStaffAction(formData: FormData): Promise<void> {
   const userId = Number(formData.get("user_id") ?? 0);
   const direction = String(formData.get("direction") ?? "");

@@ -77,3 +77,10 @@ export async function updateNames(id: number, name: string, displayName: string)
     args: [name, displayName, id],
   });
 }
+
+export async function updatePassword(id: number, hashedPassword: string): Promise<void> {
+  await getDb().execute({
+    sql: "UPDATE users SET password = ? WHERE id = ?",
+    args: [hashedPassword, id],
+  });
+}
