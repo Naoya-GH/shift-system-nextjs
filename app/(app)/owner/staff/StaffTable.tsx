@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { User } from "@/lib/types";
 import { reorderStaffAction, deleteStaffAction, renameStaffAction } from "./actions";
+import SubmitButton from "@/components/SubmitButton";
 
 export default function StaffTable({
   staffList,
@@ -36,16 +37,16 @@ export default function StaffTable({
                 <form action={reorderStaffAction} className="reorder-form">
                   <input type="hidden" name="user_id" value={user.id} />
                   <input type="hidden" name="direction" value="up" />
-                  <button type="submit" className="btn-reorder" disabled={index === 0}>
+                  <SubmitButton className="btn-reorder" disabled={index === 0}>
                     ▲
-                  </button>
+                  </SubmitButton>
                 </form>
                 <form action={reorderStaffAction} className="reorder-form">
                   <input type="hidden" name="user_id" value={user.id} />
                   <input type="hidden" name="direction" value="down" />
-                  <button type="submit" className="btn-reorder" disabled={index === staffList.length - 1}>
+                  <SubmitButton className="btn-reorder" disabled={index === staffList.length - 1}>
                     ▼
-                  </button>
+                  </SubmitButton>
                 </form>
               </td>
               <td>{user.name}</td>
@@ -108,9 +109,9 @@ export default function StaffTable({
               <button type="button" className="btn btn-secondary" onClick={() => setRenameTarget(null)}>
                 キャンセル
               </button>
-              <button type="submit" className="btn btn-primary">
+              <SubmitButton className="btn btn-primary" pendingText="変更中...">
                 変更する
-              </button>
+              </SubmitButton>
             </div>
           </form>
         </div>
@@ -125,9 +126,9 @@ export default function StaffTable({
               <button type="button" className="btn btn-secondary" onClick={() => setDeleteTarget(null)}>
                 キャンセル
               </button>
-              <button type="submit" className="btn btn-primary">
+              <SubmitButton className="btn btn-primary" pendingText="削除中...">
                 実行する
-              </button>
+              </SubmitButton>
             </div>
           </form>
         </div>

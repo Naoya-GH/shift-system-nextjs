@@ -5,6 +5,7 @@ import * as japaneseHolidays from "@/lib/helpers/japaneseHolidays";
 import { saveShiftsAction, confirmShiftsAction } from "./actions";
 import type { MonthView } from "@/lib/services/ownerShiftService";
 import type { DayLabelEntry } from "@/lib/types";
+import SubmitButton from "@/components/SubmitButton";
 
 interface DayLabelState {
   lunch: boolean;
@@ -70,11 +71,6 @@ export default function OwnerShiftForm({
     setDayLabels((prev) => ({ ...prev, [date]: { ...prev[date], ...patch } }));
   }
 
-  const assignedPayload = JSON.stringify(
-    Object.fromEntries(dates.map((d) => [d, Array.from(assigned[d] ?? [])]))
-  );
-  const dayLabelPayload = JSON.stringify(dayLabels);
-
   return (
     <>
       <div className="calendar-weekdays">
@@ -119,8 +115,6 @@ export default function OwnerShiftForm({
 
       <form className="owner-shift-form">
         <input type="hidden" name="month" value={yearMonth} />
-        <input type="hidden" name="assignedPayload" value={assignedPayload} />
-        <input type="hidden" name="dayLabelPayload" value={dayLabelPayload} />
 
         {dates.map((date) => {
           const weekday = new Date(date + "T00:00:00Z").getUTCDay();
@@ -154,6 +148,8 @@ export default function OwnerShiftForm({
                     <label className="day-label-chip day-label-chip-lunch">
                       <input
                         type="checkbox"
+                        name={`dayLabel[${date}][lunch]`}
+                        value="1"
                         checked={label.lunch}
                         onChange={(e) => updateDayLabel(date, { lunch: e.target.checked })}
                       />
@@ -162,6 +158,8 @@ export default function OwnerShiftForm({
                     <label className="day-label-chip day-label-chip-obanzai">
                       <input
                         type="checkbox"
+                        name={`dayLabel[${date}][obanzai]`}
+                        value="1"
                         checked={label.obanzai}
                         onChange={(e) => updateDayLabel(date, { obanzai: e.target.checked })}
                       />
@@ -171,6 +169,7 @@ export default function OwnerShiftForm({
                   <input
                     type="text"
                     className="day-label-custom-input"
+                    name={`dayLabel[${date}][custom]`}
                     maxLength={20}
                     placeholder="特別営業名など（任意）"
                     value={label.custom}
@@ -190,6 +189,8 @@ export default function OwnerShiftForm({
                         <label className="staff-row-checkbox">
                           <input
                             type="checkbox"
+                            name={`assigned[${date}][]`}
+                            value={user.id}
                             checked={assigned[date]?.has(user.id) ?? false}
                             onChange={() => toggleAssigned(date, user.id)}
                           />
@@ -228,12 +229,12 @@ export default function OwnerShiftForm({
           <a href="#calendar-top" className="btn btn-secondary back-to-top">
             ▲ カレンダー
           </a>
-          <button type="submit" formAction={saveShiftsAction} className="btn btn-secondary">
+          <SubmitButton formAction={saveShiftsAction} className="btn btn-secondary" pendingText="保存中...">
             保存
-          </button>
-          <button type="submit" formAction={confirmShiftsAction} className="btn btn-primary">
+          </SubmitButton>
+          <SubmitButton formAction={confirmShiftsAction} className="btn btn-primary" pendingText="確定中...">
             シフト確定
-          </button>
+          </SubmitButton>
         </div>
       </form>
     </>

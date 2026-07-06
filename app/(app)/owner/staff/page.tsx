@@ -4,6 +4,7 @@ import * as staffAccountService from "@/lib/services/staffAccountService";
 import FlashMessage from "@/components/FlashMessage";
 import StaffTable from "./StaffTable";
 import { createStaffAction } from "./actions";
+import SubmitButton from "@/components/SubmitButton";
 
 export default async function OwnerStaffPage({
   searchParams,
@@ -46,9 +47,9 @@ export default async function OwnerStaffPage({
           パスワード
           <input type="password" name="password" required minLength={4} />
         </label>
-        <button type="submit" className="btn btn-primary">
+        <SubmitButton className="btn btn-primary" pendingText="登録中...">
           登録
-        </button>
+        </SubmitButton>
       </form>
     </>
   );
