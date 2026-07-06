@@ -1,49 +1,743 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* シフト管理システム - 共通スタイル（モバイル優先） */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+    box-sizing: border-box;
 }
 
 html {
-  height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+    font-size: 16px;
+    scroll-behavior: smooth;
 }
 
 body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: #f5f5f5;
+    color: #222;
+    line-height: 1.6;
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+    color: #2f6fb3;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+.app-header {
+    background: #2f6fb3;
+    color: #fff;
+    padding: 12px 16px;
+}
+
+.app-title {
+    margin: 0 0 8px;
+    font-size: 1.25rem;
+}
+
+.app-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.app-nav a {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.app-main {
+    padding: 16px;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.flash-message {
+    background: #fff8d6;
+    border: 1px solid #e0c96b;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 16px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 14px 20px;
+    font-size: 1.05rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    min-height: 44px;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: #2f6fb3;
+    color: #fff;
+}
+
+.btn-secondary {
+    background: #e0e0e0;
+    color: #222;
+}
+
+.btn-large {
+    width: 100%;
+    font-size: 1.15rem;
+}
+
+form label {
+    display: block;
+    margin-bottom: 14px;
+    font-size: 1rem;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="date"],
+select {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    margin-top: 4px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* ログイン画面 */
+.login-page {
+    max-width: 360px;
+    margin: 60px auto;
+    padding: 24px;
+    text-align: center;
+}
+
+.login-form {
+    text-align: left;
+    margin-top: 20px;
+}
+
+/* エラー画面 */
+.error-page {
+    max-width: 480px;
+    margin: 60px auto;
+    padding: 24px;
+    text-align: center;
+}
+
+/* 月ナビゲーション */
+.month-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 8px;
+}
+
+.tab-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.tab-link {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    background: #eee;
+    text-decoration: none;
+    color: #222;
+    font-weight: bold;
+}
+
+.tab-link.is-active {
+    background: #2f6fb3;
+    color: #fff;
+}
+
+.overview-names {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.8rem;
+}
+
+.overview-name {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 4px;
+    padding: 1px 4px;
+}
+
+.day-event-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border-radius: 3px;
+    padding: 1px 4px;
+    margin-bottom: 2px;
+    color: #fff;
+}
+
+.day-event-lunch {
+    background: #2e7d32;
+}
+
+.day-event-obanzai {
+    background: #e65100;
+}
+
+.day-event-custom {
+    background: #0288d1;
+}
+
+.day-time-text {
+    font-size: 0.75rem;
+    color: #555;
+}
+
+/* カレンダーグリッド */
+.calendar-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.calendar-day {
+    background: #fff;
+    border-radius: 8px;
+    padding: 6px;
+    min-height: 90px;
+    border: 1px solid #ddd;
+}
+
+.calendar-day-blank {
+    background: transparent;
+    border: none;
+}
+
+.calendar-date {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+/* シフト希望提出：タップで開く日別エディター */
+.hint-text {
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.day-editor {
+    padding: 0;
+}
+
+.day-editor summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 6px;
+    min-height: 66px;
+}
+
+.day-editor summary::-webkit-details-marker {
+    display: none;
+}
+
+.day-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin-top: 4px;
+}
+
+.day-summary .status-badge {
+    padding: 2px 6px;
+    font-size: 0.8rem;
+    margin-right: 0;
+}
+
+.slot-editor {
+    padding: 8px 6px;
+    border-top: 1px solid #eee;
+}
+
+.slot-name {
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.time-range {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.time-range label {
+    flex: 1;
+    margin-bottom: 0;
+    font-size: 0.85rem;
+}
+
+.time-range select {
+    margin-top: 2px;
+    padding: 10px;
+}
+
+.status-option.is-selected {
+    outline: 3px solid #2f6fb3;
+}
+
+/* 曜日ヘッダー・土日祝日の表示 */
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 6px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.weekday-sun {
+    color: #d9453a;
+}
+
+.weekday-sat {
+    color: #2f6fb3;
+}
+
+.calendar-date.is-sunday {
+    color: #d9453a;
+}
+
+.calendar-date.is-saturday {
+    color: #2f6fb3;
+}
+
+.holiday-name {
+    display: block;
+    font-size: 0.7rem;
+    color: #d9453a;
+    line-height: 1.2;
+}
+
+.holiday-name-inline {
+    font-size: 0.85rem;
+    color: #d9453a;
+}
+
+.calendar-day.day-holiday-bg {
+    background: #fdeceb;
+}
+
+.calendar-day.day-saturday-bg {
+    background: #eaf2fb;
+}
+
+.status-options {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.status-option {
+    flex: 1;
+    text-align: center;
+    padding: 6px 0;
+    border-radius: 6px;
+    background: #eee;
+    font-size: 0.95rem;
+}
+
+.status-option input {
+    margin-right: 2px;
+}
+
+.status-option-ok {
+    background: #d7f4dd;
+}
+
+.status-option-maybe {
+    background: #fdf1c5;
+}
+
+.memo-input {
+    padding: 6px;
+    font-size: 0.9rem;
+}
+
+.day-working {
+    background: #d7f4dd;
+}
+
+.day-off {
+    background: #f0f0f0;
+}
+
+.day-label {
+    font-size: 0.9rem;
+}
+
+/* オーナー画面の一覧テーブル */
+.staff-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    margin-bottom: 20px;
+}
+
+.staff-table th,
+.staff-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+.reorder-cell {
+    display: flex;
+    gap: 4px;
+}
+
+.reorder-form,
+.rename-form {
+    margin-bottom: 0;
+}
+
+.actions-cell {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-reorder {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #f5f5f5;
+    cursor: pointer;
+}
+
+.btn-reorder:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 14px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn-action-rename {
+    background: #e3f2fd;
+    color: #0d47a1;
+    border-color: #90caf9;
+}
+
+.btn-action-delete {
+    background: #fdecec;
+    color: #b71c1c;
+    border-color: #e0a0a0;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    margin-right: 6px;
+}
+
+.status-badge-ok {
+    background: #d7f4dd;
+}
+
+.status-badge-maybe {
+    background: #fdf1c5;
+}
+
+.status-badge-none {
+    background: #eee;
+    color: #888;
+}
+
+.time-text {
+    font-size: 0.85rem;
+    color: #555;
+    margin-right: 6px;
+}
+
+.memo-text {
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.slot-label {
+    font-weight: bold;
+    font-size: 0.85rem;
+    margin-right: 4px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.form-actions .btn {
+    flex: 1;
+}
+
+.form-actions-sticky {
+    position: sticky;
+    bottom: 0;
+    background: #f5f5f5;
+    padding: 10px 0;
+}
+
+.form-actions-sticky .back-to-top {
+    flex: 0 0 auto;
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+/* オーナー：シフト作成（日付ごとのカード） */
+.day-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.day-card-header {
+    background: #f0f0f0;
+    padding: 8px 12px;
+    font-weight: bold;
+}
+
+.day-label-editor {
+    margin-top: 8px;
+    font-weight: normal;
+}
+
+.day-label-editor summary {
+    list-style: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-bottom: 4px;
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    background: #eee;
+    border: 1px solid #ddd;
+}
+
+.day-label-editor summary::-webkit-details-marker {
+    display: none;
+}
+
+.day-label-editor summary .day-event-label {
+    display: inline-block;
+    margin-bottom: 0;
+    margin-left: 4px;
+}
+
+.day-card-empty {
+    padding: 12px;
+    margin: 0;
+}
+
+.day-label-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.day-label-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 0;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    background: #eee;
+    border: 2px solid transparent;
+}
+
+.day-label-chip input {
+    width: 20px;
+    height: 20px;
+}
+
+.day-label-chip-lunch {
+    background: #d7f4dd;
+}
+
+.day-label-chip-lunch:has(input:checked) {
+    border-color: #2e7d32;
+}
+
+.day-label-chip-obanzai {
+    background: #ffe0b2;
+}
+
+.day-label-chip-obanzai:has(input:checked) {
+    border-color: #e65100;
+}
+
+.day-label-custom-input {
+    padding: 10px;
+    font-size: 0.95rem;
+    border: 2px solid #81d4fa;
+}
+
+.is-sunday-card .day-card-header {
+    background: #fdeceb;
+}
+
+.is-saturday-card .day-card-header {
+    background: #eaf2fb;
+}
+
+.day-card-list {
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+}
+
+.staff-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 10px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+
+.staff-row.is-confirmed {
+    background: #eaf4ff;
+}
+
+.staff-row-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
+    font-weight: bold;
+}
+
+.staff-row-checkbox input {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
+.staff-row-detail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    font-size: 0.9rem;
+}
+
+.request-line {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+/* オーナー：月間ミニカレンダー（○人数の一覧・タップでその日のカードへ移動） */
+a.overview-day {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.ok-count,
+.maybe-count {
+    display: block;
+    margin-top: 4px;
+    font-weight: bold;
+}
+
+.ok-count {
+    color: #2f6fb3;
+}
+
+.maybe-count {
+    color: #b8860b;
+}
+
+@media (min-width: 700px) {
+    .app-main {
+        max-width: 900px;
+    }
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 100;
+}
+
+.modal-overlay[hidden] {
+    display: none;
+}
+
+.modal-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+    max-width: 360px;
+}
+
+.modal-box h3 {
+    margin-top: 0;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.modal-actions .btn {
+    flex: 1;
 }

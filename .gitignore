@@ -36,6 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# ローカル動作確認用のファイルDB（file:./local.db を使った場合）
+local.db
+local.db-*
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

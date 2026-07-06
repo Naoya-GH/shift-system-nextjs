@@ -1,0 +1,122 @@
+/* 確定シフト表（印刷用） */
+
+.print-page {
+    margin: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    color: #222;
+}
+
+.print-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.print-toolbar button {
+    padding: 8px 16px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.print-scroll {
+    overflow-x: auto;
+}
+
+.print-sheet {
+    border-collapse: collapse;
+    width: max-content;
+    min-width: 100%;
+}
+
+.print-sheet th,
+.print-sheet td {
+    border: 1px solid #999;
+    padding: 4px 6px;
+    text-align: center;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.corner-cell {
+    background: #f0f0f0;
+}
+
+.print-sheet thead th.weekend {
+    color: #d9453a;
+}
+
+.staff-name-cell {
+    background: #f0f0f0;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.day-label-cell {
+    vertical-align: top;
+    padding: 4px 2px;
+}
+
+.vertical-label {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    display: inline-block;
+    font-weight: bold;
+    font-size: 0.75rem;
+    line-height: 1.1;
+    margin: 0 1px;
+}
+
+.vertical-label-lunch {
+    color: #2e7d32;
+}
+
+.vertical-label-obanzai {
+    color: #e65100;
+}
+
+.vertical-label-custom {
+    color: #0288d1;
+}
+
+.print-legend {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 0.9rem;
+}
+
+.print-footnotes {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+    font-size: 0.85rem;
+    color: #444;
+}
+
+@media print {
+    .no-print {
+        display: none;
+    }
+
+    @page {
+        size: landscape;
+    }
+
+    .print-page {
+        margin: 0;
+    }
+
+    .print-scroll {
+        overflow: visible;
+    }
+
+    .print-sheet th,
+    .print-sheet td {
+        font-size: 0.7rem;
+        padding: 2px 3px;
+    }
+}
