@@ -45,9 +45,11 @@ export async function getMonthOverview(yearMonth: string): Promise<Record<string
   const allUsers = await userRepository.all();
   const staffList = allUsers.filter((u) => u.role !== "owner");
 
+  const shiftsByDate = await shiftRepository.findForMonthAllUsers(yearMonth);
+
   const overview: Record<string, string[]> = {};
   for (const date of calendar.daysInMonth(yearMonth)) {
-    const shiftsByUser = await shiftRepository.findForDate(date);
+    const shiftsByUser = shiftsByDate[date] ?? {};
 
     const names: string[] = [];
     for (const user of staffList) {

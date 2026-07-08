@@ -53,6 +53,26 @@ export async function findForDate(
   return out;
 }
 
+// 月全体を1クエリで取得する（日付ごとに findForDate を呼ぶと日数分の往復が発生し、
+// リモートDBへのネットワーク遅延が積み重なって画面表示が大幅に遅くなるため）
+export async function findForMonthAllUsers(
+  yearMonth: string
+): Promise<Record<string, Record<number, Record<string, ShiftRequestRow>>>> {
+  const result = await getDb().execute({
+    sql: "SELECT * FROM shift_requests WHERE work_date LIKE ?",
+    args: [`${yearMonth}-%`],
+  });
+
+  const out: Record<string, Record<number, Record<string, ShiftRequestRow>>> = {};
+  for (const row of result.rows) {
+    const model = toModel(row as Row);
+    out[model.workDate] ??= {};
+    out[model.workDate][model.userId] ??= {};
+    out[model.workDate][model.userId][model.slot] = model;
+  }
+  return out;
+}
+
 export async function upsert(
   userId: number,
   workDate: string,

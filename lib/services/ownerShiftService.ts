@@ -37,9 +37,12 @@ export async function getMonthView(yearMonth: string): Promise<MonthView> {
   const cells: MonthView["cells"] = {};
   const statusCounts: MonthView["statusCounts"] = {};
 
+  const requestsByDate = await shiftRequestRepository.findForMonthAllUsers(yearMonth);
+  const shiftsByDate = await shiftRepository.findForMonthAllUsers(yearMonth);
+
   for (const date of dates) {
-    const requestsByUser = await shiftRequestRepository.findForDate(date);
-    const shiftsByUser = await shiftRepository.findForDate(date);
+    const requestsByUser = requestsByDate[date] ?? {};
+    const shiftsByUser = shiftsByDate[date] ?? {};
     statusCounts[date] = { ok: 0, maybe: 0 };
     cells[date] = {};
 
@@ -111,9 +114,12 @@ export async function getPrintView(yearMonth: string): Promise<PrintView> {
   const cellText: PrintView["cellText"] = {};
   const footnotes: PrintView["footnotes"] = [];
 
+  const shiftsByDate = await shiftRepository.findForMonthAllUsers(yearMonth);
+  const requestsByDate = await shiftRequestRepository.findForMonthAllUsers(yearMonth);
+
   for (const date of dates) {
-    const shiftsByUser = await shiftRepository.findForDate(date);
-    const requestsByUser = await shiftRequestRepository.findForDate(date);
+    const shiftsByUser = shiftsByDate[date] ?? {};
+    const requestsByUser = requestsByDate[date] ?? {};
     cellText[date] = {};
 
     for (const user of staffList) {
