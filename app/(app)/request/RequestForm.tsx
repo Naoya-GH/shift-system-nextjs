@@ -110,6 +110,13 @@ export default function RequestForm({ yearMonth, weeks, grid }: Props) {
                               type="radio"
                               checked={entry.status === value}
                               onChange={() => updateEntry(date, slotKey, { status: value })}
+                              onClick={() => {
+                                // 選択済みのものをもう一度タップした場合は選択解除する
+                                // （ラジオボタンは同じものを再度押しても標準では解除されないため）
+                                if (entry.status === value) {
+                                  updateEntry(date, slotKey, { status: "" });
+                                }
+                              }}
                             />
                             {label}
                           </label>
