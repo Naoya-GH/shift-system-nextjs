@@ -224,9 +224,15 @@ select {
     border: none;
 }
 
-/* シフト希望提出：日付をタップするとポップアップで入力する（ボタンのブラウザ標準見た目を打ち消す） */
+/* シフト希望提出：日付をタップするとポップアップで入力する（ボタンのブラウザ標準見た目を打ち消す）
+   button要素はdisplay:blockを指定してもブラウザ内部で中身を縦方向に中央寄せする挙動が残るため、
+   flex+flex-startで明示的に上詰めにする（祝日名などで中身の高さが違うセル同士でも
+   日付の数字の位置が揃うようにするため） */
 .day-cell-button {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
     width: 100%;
     font: inherit;
     color: inherit;
@@ -283,7 +289,7 @@ select {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    margin-top: 10px;
+    margin-top: 14px;
     width: 100%;
     min-width: 0;
 }
@@ -375,6 +381,7 @@ select {
     color: #d9453a;
     line-height: 1.2;
     overflow-wrap: anywhere;
+    margin-top: 4px;
 }
 
 .holiday-name-inline {
