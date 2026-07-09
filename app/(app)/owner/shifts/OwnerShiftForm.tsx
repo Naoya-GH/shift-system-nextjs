@@ -71,6 +71,14 @@ export default function OwnerShiftForm({
     setDayLabels((prev) => ({ ...prev, [date]: { ...prev[date], ...patch } }));
   }
 
+  // 日付×スタッフごとに個別のname付きチェックボックスを持たせる方式だと、
+  // スタッフ数・日数が多い月でリクエスト本文が8KBを超え、ホスティング環境のWAFに
+  // ブロックされることが分かったため、JSONにまとめた隠しフィールドで送信する
+  const assignedPayload = JSON.stringify(
+    Object.fromEntries(dates.map((d) => [d, Array.from(assigned[d] ?? [])]))
+  );
+  const dayLabelPayload = JSON.stringify(dayLabels);
+
   return (
     <>
       <div className="calendar-weekdays">
@@ -115,6 +123,8 @@ export default function OwnerShiftForm({
 
       <form className="owner-shift-form">
         <input type="hidden" name="month" value={yearMonth} />
+        <input type="hidden" name="assignedPayload" value={assignedPayload} />
+        <input type="hidden" name="dayLabelPayload" value={dayLabelPayload} />
 
         {dates.map((date) => {
           const weekday = new Date(date + "T00:00:00Z").getUTCDay();
@@ -148,8 +158,6 @@ export default function OwnerShiftForm({
                     <label className="day-label-chip day-label-chip-lunch">
                       <input
                         type="checkbox"
-                        name={`dayLabel[${date}][lunch]`}
-                        value="1"
                         checked={label.lunch}
                         onChange={(e) => updateDayLabel(date, { lunch: e.target.checked })}
                       />
@@ -158,8 +166,6 @@ export default function OwnerShiftForm({
                     <label className="day-label-chip day-label-chip-obanzai">
                       <input
                         type="checkbox"
-                        name={`dayLabel[${date}][obanzai]`}
-                        value="1"
                         checked={label.obanzai}
                         onChange={(e) => updateDayLabel(date, { obanzai: e.target.checked })}
                       />
@@ -169,7 +175,6 @@ export default function OwnerShiftForm({
                   <input
                     type="text"
                     className="day-label-custom-input"
-                    name={`dayLabel[${date}][custom]`}
                     maxLength={20}
                     placeholder="特別営業名など（任意）"
                     value={label.custom}
@@ -189,8 +194,6 @@ export default function OwnerShiftForm({
                         <label className="staff-row-checkbox">
                           <input
                             type="checkbox"
-                            name={`assigned[${date}][]`}
-                            value={user.id}
                             checked={assigned[date]?.has(user.id) ?? false}
                             onChange={() => toggleAssigned(date, user.id)}
                           />

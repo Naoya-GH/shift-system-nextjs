@@ -6,48 +6,43 @@ import * as ownerShiftService from "@/lib/services/ownerShiftService";
 import * as dayLabelService from "@/lib/services/dayLabelService";
 import type { DayLabelForm } from "@/lib/services/dayLabelService";
 
-const ASSIGNED_PATTERN = /^assigned\[([^\]]+)\]\[\]$/;
-const DAY_LABEL_PATTERN = /^dayLabel\[([^\]]+)\]\[(lunch|obanzai|custom)\]$/;
-
-// FormDataを直接読む（JSからJSON文字列を組み立てて渡す方式だと、JS無効/失敗時に
-// 何も送信できなくなってしまうため、ブラウザのフォーム送信結果を素直にパースする）
-function parseForm(formData: FormData): {
-  assignedByDate: Record<string, number[]>;
-  dayLabelByDate: Record<string, DayLabelForm>;
-} {
-  const assignedByDate: Record<string, number[]> = {};
-  const dayLabelByDate: Record<string, DayLabelForm> = {};
-
-  for (const [key, value] of formData.entries()) {
-    const assignedMatch = key.match(ASSIGNED_PATTERN);
-    if (assignedMatch) {
-      const date = assignedMatch[1];
-      assignedByDate[date] ??= [];
-      assignedByDate[date].push(Number(value));
-      continue;
-    }
-
-    const labelMatch = key.match(DAY_LABEL_PATTERN);
-    if (labelMatch) {
-      const [, date, field] = labelMatch;
-      dayLabelByDate[date] ??= {};
-      dayLabelByDate[date][field as keyof DayLabelForm] = String(value);
-    }
-  }
-
-  return { assignedByDate, dayLabelByDate };
+interface DayLabelState {
+  lunch: boolean;
+  obanzai: boolean;
+  custom: string;
 }
 
 async function persist(formData: FormData, confirmed: boolean): Promise<void> {
   const yearMonth = String(formData.get("month") ?? calendar.currentMonth());
-  const { assignedByDate, dayLabelByDate } = parseForm(formData);
+
+  let assignedByDate: Record<string, number[]> = {};
+  try {
+    assignedByDate = JSON.parse(String(formData.get("assignedPayload") ?? "{}"));
+  } catch {
+    assignedByDate = {};
+  }
+
+  let dayLabelsByDate: Record<string, DayLabelState> = {};
+  try {
+    dayLabelsByDate = JSON.parse(String(formData.get("dayLabelPayload") ?? "{}"));
+  } catch {
+    dayLabelsByDate = {};
+  }
 
   for (const date of calendar.daysInMonth(yearMonth)) {
     const userIds = assignedByDate[date] ?? [];
     await ownerShiftService.saveDay(date, userIds, confirmed);
   }
 
-  await dayLabelService.saveMonth(dayLabelByDate);
+  const formByDate: Record<string, DayLabelForm> = {};
+  for (const [date, entry] of Object.entries(dayLabelsByDate)) {
+    formByDate[date] = {
+      lunch: entry.lunch ? "1" : "",
+      obanzai: entry.obanzai ? "1" : "",
+      custom: entry.custom,
+    };
+  }
+  await dayLabelService.saveMonth(formByDate);
 
   const message = confirmed ? "シフトを確定しました。" : "シフトを保存しました。";
   redirect(`/owner/shifts?month=${yearMonth}&flash=${encodeURIComponent(message)}`);

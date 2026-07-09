@@ -20,12 +20,6 @@ interface Props {
 
 const EMPTY_ENTRY: GridEntry = { status: "", startTime: "", endTime: "", memo: "" };
 
-// entries[日付][区分][項目] という名前を持たせることで、JSが読み込まれる前/失敗した場合でも
-// 素のHTMLフォームとして送信できるようにする（区分未設定の場合は区分部分を空にする）
-function fieldName(date: string, slot: string, field: string): string {
-  return `entries[${date}][${slot}][${field}]`;
-}
-
 export default function RequestForm({ yearMonth, weeks, grid }: Props) {
   const [state, setState] = useState<Grid>(grid);
   const slotKeys = shiftSlots.keys();
@@ -41,9 +35,17 @@ export default function RequestForm({ yearMonth, weeks, grid }: Props) {
     }));
   }
 
+  // 日付ごとに個別のname付きフィールドを持たせる方式だと、月全体分でリクエスト本文が
+  // 8KBを超えてしまい、ホスティング環境のWAFにブロックされることが分かったため、
+  // 変更があった分だけをJSONにまとめた1つの隠しフィールドで送信する
+  // （JSが無効/失敗している場合はこのJSONが更新されず、提出しても変更前の内容のまま
+  // 送信されてしまう制限があるが、WAFによる送信不可の方が実害が大きいためこちらを優先する）
+  const payload = JSON.stringify(state);
+
   return (
     <form action={saveRequestAction} className="request-form">
       <input type="hidden" name="month" value={yearMonth} />
+      <input type="hidden" name="payload" value={payload} />
 
       <div className="calendar-weekdays">
         {weekdayLabels.map((wLabel, i) => (
@@ -106,8 +108,6 @@ export default function RequestForm({ yearMonth, weeks, grid }: Props) {
                           >
                             <input
                               type="radio"
-                              name={fieldName(date, slotKey, "status")}
-                              value={value}
                               checked={entry.status === value}
                               onChange={() => updateEntry(date, slotKey, { status: value })}
                             />
@@ -119,7 +119,6 @@ export default function RequestForm({ yearMonth, weeks, grid }: Props) {
                         <label>
                           出勤
                           <select
-                            name={fieldName(date, slotKey, "startTime")}
                             value={entry.startTime}
                             onChange={(e) => updateEntry(date, slotKey, { startTime: e.target.value })}
                           >
@@ -134,7 +133,6 @@ export default function RequestForm({ yearMonth, weeks, grid }: Props) {
                         <label>
                           退勤
                           <select
-                            name={fieldName(date, slotKey, "endTime")}
                             value={entry.endTime}
                             onChange={(e) => updateEntry(date, slotKey, { endTime: e.target.value })}
                           >
@@ -150,7 +148,6 @@ export default function RequestForm({ yearMonth, weeks, grid }: Props) {
                       <input
                         type="text"
                         className="memo-input"
-                        name={fieldName(date, slotKey, "memo")}
                         placeholder="ひとこと（任意）"
                         value={entry.memo}
                         onChange={(e) => updateEntry(date, slotKey, { memo: e.target.value })}
