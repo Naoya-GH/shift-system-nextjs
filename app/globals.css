@@ -334,6 +334,15 @@ select {
 }
 
 /* 曜日ヘッダー・土日祝日の表示 */
+/* カレンダー全体（曜日ヘッダー＋週の並び）を枠で囲む */
+.calendar-grid-frame {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 16px;
+}
+
 .calendar-weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);

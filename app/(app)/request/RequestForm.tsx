@@ -50,6 +50,7 @@ export default function RequestForm({ yearMonth, weeks, grid }: Props) {
       <input type="hidden" name="month" value={yearMonth} />
       <input type="hidden" name="payload" value={payload} />
 
+      <div className="calendar-grid-frame">
       <div className="calendar-weekdays">
         {weekdayLabels.map((wLabel, i) => (
           <span key={wLabel} className={i === 0 ? "weekday-sun" : i === 6 ? "weekday-sat" : ""}>
@@ -112,6 +113,7 @@ export default function RequestForm({ yearMonth, weeks, grid }: Props) {
           })}
         </div>
       ))}
+      </div>
 
       <div className="modal-overlay" hidden={selectedDate === null}>
         <div className="modal-box">
