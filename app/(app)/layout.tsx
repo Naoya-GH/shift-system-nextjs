@@ -1,4 +1,5 @@
 import { currentUser } from "@/lib/services/authService";
+import { appConfig } from "@/lib/config";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser();
@@ -6,7 +7,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <>
       <header className="app-header">
-        <h1 className="app-title">シフト管理システム</h1>
+        <h1 className="app-title">{appConfig.name}</h1>
         {user && (
           <nav className="app-nav">
             {user.role === "owner" ? (

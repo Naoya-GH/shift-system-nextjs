@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { appConfig } from "@/lib/config";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "シフト管理システム",
+  title: appConfig.name,
 };
 
 export default function RootLayout({

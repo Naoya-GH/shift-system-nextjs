@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/services/authService";
+import { appConfig } from "@/lib/config";
 import { loginAction } from "./actions";
 import SubmitButton from "@/components/SubmitButton";
 
@@ -17,7 +18,7 @@ export default async function LoginPage({
 
   return (
     <main className="login-page">
-      <h1 className="app-title">シフト管理システム</h1>
+      <h1 className="app-title">{appConfig.name}</h1>
       {params.error && <p className="flash-message">{params.error}</p>}
       <form action={loginAction} className="login-form">
         <label>

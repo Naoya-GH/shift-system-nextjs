@@ -1,5 +1,5 @@
 export const appConfig = {
-  name: "シフト管理システム",
+  name: "ひむか シフト管理",
   timezone: "Asia/Tokyo",
   session: {
     cookieName: "shift_sess",
