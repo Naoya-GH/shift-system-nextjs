@@ -213,7 +213,7 @@ select {
     background: #fff;
     border-radius: 8px;
     padding: 6px;
-    min-height: 90px;
+    min-height: 108px;
     border: 1px solid #ddd;
     min-width: 0;
     overflow: hidden;
@@ -244,7 +244,7 @@ select {
    min-heightを固定し、バッジの有無で日付の位置がズレないようにする */
 .calendar-date-row {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     flex-wrap: wrap;
     gap: 4px;
     margin-bottom: 4px;
@@ -761,9 +761,10 @@ a.overview-day {
         display: none;
     }
 
-    /* 時間を表示しない分、セルの白い箱を小さくして見やすくする */
+    /* 時間を表示しない分、セルの白い箱を小さくして見やすくする
+       （祝日名で2行になっても窮屈にならない程度の余裕は持たせる） */
     .calendar-day {
-        min-height: 56px;
+        min-height: 66px;
         padding: 4px;
     }
 
