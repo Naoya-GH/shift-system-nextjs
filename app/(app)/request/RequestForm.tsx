@@ -78,22 +78,31 @@ export default function RequestForm({ yearMonth, weeks, grid }: Props) {
                 className={`calendar-day day-cell-button ${dayClass}`}
                 onClick={() => setSelectedDate(date)}
               >
-                <span className={`calendar-date ${dateClass}`}>{Number(date.slice(8, 10))}</span>
-                {holidayName && <span className="holiday-name">{holidayName}</span>}
-                <span className="day-summary">
+                <span className="calendar-date-row">
+                  <span className={`calendar-date ${dateClass}`}>{Number(date.slice(8, 10))}</span>
                   {slotKeys.map((slotKey) => {
                     const entry = state[date]?.[slotKey] ?? EMPTY_ENTRY;
                     if (entry.status === "") return null;
                     return (
-                      <span key={slotKey}>
-                        <span className={`status-badge status-badge-${entry.status}`}>
-                          {shiftStatus.label(entry.status)}
-                        </span>
-                        {(entry.startTime !== "" || entry.endTime !== "") && (
-                          <span className="time-text">
-                            {entry.startTime}〜{entry.endTime}
-                          </span>
-                        )}
+                      <span
+                        key={slotKey}
+                        className={`status-badge status-badge-${entry.status}`}
+                      >
+                        {shiftStatus.label(entry.status)}
+                      </span>
+                    );
+                  })}
+                </span>
+                {holidayName && <span className="holiday-name">{holidayName}</span>}
+                <span className="day-summary">
+                  {slotKeys.map((slotKey) => {
+                    const entry = state[date]?.[slotKey] ?? EMPTY_ENTRY;
+                    if (entry.status === "" || (entry.startTime === "" && entry.endTime === "")) {
+                      return null;
+                    }
+                    return (
+                      <span key={slotKey} className="time-text">
+                        {entry.startTime}-{entry.endTime}
                       </span>
                     );
                   })}

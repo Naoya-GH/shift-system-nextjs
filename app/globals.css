@@ -238,7 +238,22 @@ select {
 
 .calendar-date {
     font-weight: bold;
+}
+
+/* シフト希望提出：日付の数字と◯/△バッジを横並びにする */
+.calendar-date-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
     margin-bottom: 4px;
+}
+
+.calendar-date-row .status-badge {
+    display: inline-block;
+    padding: 1px 5px;
+    font-size: 0.7rem;
+    margin-right: 0;
 }
 
 /* シフト希望提出：タップで開く日別エディター */
@@ -274,13 +289,6 @@ select {
 .day-summary > span {
     display: block;
     min-width: 0;
-}
-
-.day-summary .status-badge {
-    display: inline-block;
-    padding: 1px 5px;
-    font-size: 0.75rem;
-    margin-right: 0;
 }
 
 .day-summary .time-text {

@@ -28,7 +28,9 @@ export async function getMonthSchedule(
       for (const slotKey of shiftSlots.keys()) {
         const request = requestsByDate[date]?.[slotKey];
         if (request && (request.startTime !== "" || request.endTime !== "")) {
-          timeText = `${request.startTime}〜${request.endTime}`;
+          // 「〜」は狭いカレンダーグリッド内で改行の区切りとして孤立しやすく
+          // セルが縦に間延びしてしまうため、半角ハイフンを使う
+          timeText = `${request.startTime}-${request.endTime}`;
           break;
         }
       }
