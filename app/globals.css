@@ -743,6 +743,14 @@ a.overview-day {
     }
 }
 
+/* スマホ幅ではカレンダーの日付セルに時間まで表示すると窮屈になるため、
+   ◯/△バッジのみ表示し、時間はセルをタップしたモーダルで確認する */
+@media (max-width: 699px) {
+    .day-summary {
+        display: none;
+    }
+}
+
 .modal-overlay {
     position: fixed;
     top: 0;
