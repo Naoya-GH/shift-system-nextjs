@@ -68,19 +68,17 @@ export default function StaffTable({
                 >
                   変更
                 </button>
-                {user.id !== currentUserId && (
-                  <button
-                    type="button"
-                    className="btn-action btn-action-rename"
-                    onClick={() => {
-                      setPasswordTarget(user);
-                      setNewPassword("");
-                      setNewPasswordConfirm("");
-                    }}
-                  >
-                    パスワード変更
-                  </button>
-                )}
+                <button
+                  type="button"
+                  className="btn-action btn-action-rename"
+                  onClick={() => {
+                    setPasswordTarget(user);
+                    setNewPassword("");
+                    setNewPasswordConfirm("");
+                  }}
+                >
+                  パスワード変更
+                </button>
                 {user.id !== currentUserId ? (
                   <button
                     type="button"

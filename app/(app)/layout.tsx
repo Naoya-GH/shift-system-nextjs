@@ -20,7 +20,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 <a href="/schedule">確定シフト確認</a>
               </>
             )}
-            <a href="/account/password">パスワード変更</a>
+            {user.role !== "owner" && <a href="/account/password">パスワード変更</a>}
             <a href="/logout">ログアウト</a>
           </nav>
         )}
