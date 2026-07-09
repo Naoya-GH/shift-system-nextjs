@@ -22,6 +22,7 @@ const EMPTY_ENTRY: GridEntry = { status: "", startTime: "", endTime: "", memo: "
 
 export default function RequestForm({ yearMonth, weeks, grid }: Props) {
   const [state, setState] = useState<Grid>(grid);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const slotKeys = shiftSlots.keys();
   const timeOptions = businessHours.timeOptions();
 
@@ -41,6 +42,8 @@ export default function RequestForm({ yearMonth, weeks, grid }: Props) {
   // （JSが無効/失敗している場合はこのJSONが更新されず、提出しても変更前の内容のまま
   // 送信されてしまう制限があるが、WAFによる送信不可の方が実害が大きいためこちらを優先する）
   const payload = JSON.stringify(state);
+
+  const selectedHolidayName = selectedDate ? japaneseHolidays.label(selectedDate) : null;
 
   return (
     <form action={saveRequestAction} className="request-form">
@@ -69,104 +72,126 @@ export default function RequestForm({ yearMonth, weeks, grid }: Props) {
             const dateClass = isSunday ? "is-sunday" : isSaturday ? "is-saturday" : "";
 
             return (
-              <details className={`calendar-day day-editor ${dayClass}`} key={date}>
-                <summary>
-                  <span className={`calendar-date ${dateClass}`}>{Number(date.slice(8, 10))}</span>
-                  {holidayName && <span className="holiday-name">{holidayName}</span>}
-                  <span className="day-summary">
-                    {slotKeys.map((slotKey) => {
-                      const entry = state[date]?.[slotKey] ?? EMPTY_ENTRY;
-                      if (entry.status === "") return null;
-                      return (
-                        <span key={slotKey}>
-                          <span className={`status-badge status-badge-${entry.status}`}>
-                            {shiftStatus.label(entry.status)}
-                          </span>
-                          {(entry.startTime !== "" || entry.endTime !== "") && (
-                            <span className="time-text">
-                              {entry.startTime}〜{entry.endTime}
-                            </span>
-                          )}
+              <button
+                type="button"
+                key={date}
+                className={`calendar-day day-cell-button ${dayClass}`}
+                onClick={() => setSelectedDate(date)}
+              >
+                <span className={`calendar-date ${dateClass}`}>{Number(date.slice(8, 10))}</span>
+                {holidayName && <span className="holiday-name">{holidayName}</span>}
+                <span className="day-summary">
+                  {slotKeys.map((slotKey) => {
+                    const entry = state[date]?.[slotKey] ?? EMPTY_ENTRY;
+                    if (entry.status === "") return null;
+                    return (
+                      <span key={slotKey}>
+                        <span className={`status-badge status-badge-${entry.status}`}>
+                          {shiftStatus.label(entry.status)}
                         </span>
-                      );
-                    })}
-                  </span>
-                </summary>
-
-                {slotKeys.map((slotKey) => {
-                  const entry = state[date]?.[slotKey] ?? EMPTY_ENTRY;
-                  return (
-                    <div className="slot-editor" key={slotKey}>
-                      {slotKey !== "" && <div className="slot-name">{shiftSlots.label(slotKey)}</div>}
-                      <div className="status-options">
-                        {Object.entries(shiftStatus.all()).map(([value, label]) => (
-                          <label
-                            key={value}
-                            className={`status-option status-option-${value} ${
-                              entry.status === value ? "is-selected" : ""
-                            }`}
-                          >
-                            <input
-                              type="radio"
-                              checked={entry.status === value}
-                              onChange={() => updateEntry(date, slotKey, { status: value })}
-                              onClick={() => {
-                                // 選択済みのものをもう一度タップした場合は選択解除する
-                                // （ラジオボタンは同じものを再度押しても標準では解除されないため）
-                                if (entry.status === value) {
-                                  updateEntry(date, slotKey, { status: "" });
-                                }
-                              }}
-                            />
-                            {label}
-                          </label>
-                        ))}
-                      </div>
-                      <div className="time-range">
-                        <label>
-                          出勤
-                          <select
-                            value={entry.startTime}
-                            onChange={(e) => updateEntry(date, slotKey, { startTime: e.target.value })}
-                          >
-                            <option value="">--:--</option>
-                            {timeOptions.map((t) => (
-                              <option key={t} value={t}>
-                                {t}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label>
-                          退勤
-                          <select
-                            value={entry.endTime}
-                            onChange={(e) => updateEntry(date, slotKey, { endTime: e.target.value })}
-                          >
-                            <option value="">--:--</option>
-                            {timeOptions.map((t) => (
-                              <option key={t} value={t}>
-                                {t}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                      </div>
-                      <input
-                        type="text"
-                        className="memo-input"
-                        placeholder="ひとこと（任意）"
-                        value={entry.memo}
-                        onChange={(e) => updateEntry(date, slotKey, { memo: e.target.value })}
-                      />
-                    </div>
-                  );
-                })}
-              </details>
+                        {(entry.startTime !== "" || entry.endTime !== "") && (
+                          <span className="time-text">
+                            {entry.startTime}〜{entry.endTime}
+                          </span>
+                        )}
+                      </span>
+                    );
+                  })}
+                </span>
+              </button>
             );
           })}
         </div>
       ))}
+
+      <div className="modal-overlay" hidden={selectedDate === null}>
+        <div className="modal-box">
+          {selectedDate && (
+            <>
+              <h3>
+                {Number(selectedDate.slice(5, 7))}月{Number(selectedDate.slice(8, 10))}日
+                {selectedHolidayName && <span className="holiday-name-inline"> {selectedHolidayName}</span>}
+              </h3>
+
+              {slotKeys.map((slotKey) => {
+                const entry = state[selectedDate]?.[slotKey] ?? EMPTY_ENTRY;
+                return (
+                  <div className="slot-editor" key={slotKey}>
+                    {slotKey !== "" && <div className="slot-name">{shiftSlots.label(slotKey)}</div>}
+                    <div className="status-options">
+                      {Object.entries(shiftStatus.all()).map(([value, label]) => (
+                        <label
+                          key={value}
+                          className={`status-option status-option-${value} ${
+                            entry.status === value ? "is-selected" : ""
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            checked={entry.status === value}
+                            onChange={() => updateEntry(selectedDate, slotKey, { status: value })}
+                            onClick={() => {
+                              // 選択済みのものをもう一度タップした場合は選択解除する
+                              // （ラジオボタンは同じものを再度押しても標準では解除されないため）
+                              if (entry.status === value) {
+                                updateEntry(selectedDate, slotKey, { status: "" });
+                              }
+                            }}
+                          />
+                          {label}
+                        </label>
+                      ))}
+                    </div>
+                    <div className="time-range">
+                      <label>
+                        出勤
+                        <select
+                          value={entry.startTime}
+                          onChange={(e) => updateEntry(selectedDate, slotKey, { startTime: e.target.value })}
+                        >
+                          <option value="">--:--</option>
+                          {timeOptions.map((t) => (
+                            <option key={t} value={t}>
+                              {t}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label>
+                        退勤
+                        <select
+                          value={entry.endTime}
+                          onChange={(e) => updateEntry(selectedDate, slotKey, { endTime: e.target.value })}
+                        >
+                          <option value="">--:--</option>
+                          {timeOptions.map((t) => (
+                            <option key={t} value={t}>
+                              {t}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    </div>
+                    <input
+                      type="text"
+                      className="memo-input"
+                      placeholder="ひとこと（任意）"
+                      value={entry.memo}
+                      onChange={(e) => updateEntry(selectedDate, slotKey, { memo: e.target.value })}
+                    />
+                  </div>
+                );
+              })}
+
+              <div className="modal-actions">
+                <button type="button" className="btn btn-primary" onClick={() => setSelectedDate(null)}>
+                  閉じる
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
 
       <SubmitButton className="btn btn-primary btn-large" pendingText="送信中...">
         提出
