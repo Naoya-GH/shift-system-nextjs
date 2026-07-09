@@ -240,13 +240,15 @@ select {
     font-weight: bold;
 }
 
-/* シフト希望提出：日付の数字と◯/△バッジを横並びにする */
+/* シフト希望提出：日付の数字と◯/△バッジを横並びにする
+   min-heightを固定し、バッジの有無で日付の位置がズレないようにする */
 .calendar-date-row {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 4px;
     margin-bottom: 4px;
+    min-height: 24px;
 }
 
 .calendar-date-row .status-badge {
@@ -281,7 +283,7 @@ select {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    margin-top: 4px;
+    margin-top: 10px;
     width: 100%;
     min-width: 0;
 }
@@ -293,8 +295,8 @@ select {
 
 .day-summary .time-text {
     display: block;
-    font-size: 0.65rem;
-    line-height: 1.2;
+    font-size: 0.85rem;
+    line-height: 1.25;
     margin-right: 0;
     overflow-wrap: anywhere;
 }
@@ -748,6 +750,16 @@ a.overview-day {
 @media (max-width: 699px) {
     .day-summary {
         display: none;
+    }
+
+    /* 時間を表示しない分、セルの白い箱を小さくして見やすくする */
+    .calendar-day {
+        min-height: 56px;
+        padding: 4px;
+    }
+
+    .calendar-date-row {
+        margin-bottom: 0;
     }
 }
 
